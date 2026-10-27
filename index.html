@@ -782,8 +782,9 @@ function loadData() {
       let json;
       try { json = JSON.parse(text); } catch(e) { throw new Error('JSON parse gagal: ' + text.substring(0,100)); }
       if (json.status === 'ok') {
-        pelajarData = json.data.map(p => ({
+        pelajarData = json.data.map((p, i) => ({
           ...p,
+          id:      p.id || String(p.noic) || ('P' + String(i+1).padStart(3,'0')),
           kStatus: p.kStatus || { k1:'pending', k2:'pending', k3:'pending', k4:'pending', k5:'pending', k6:'pending' },
           kMasa:   p.kMasa   || { k1:null, k2:null, k3:null, k4:null, k5:null, k6:null },
           kNota:   p.kNota   || { k1:'', k2:'', k3:'', k4:'', k5:'', k6:'' },
@@ -1411,8 +1412,8 @@ function renderBoard() {
 
   const grid = KAUNTER_NAMES.map((name,i) => {
     const k    = KAUNTER_KEYS[i];
-    const done = pelajarData.filter(p => p.kStatus[k]==='done').length;
-    const last = pelajarData.filter(p => p.kStatus[k]==='done').slice(-1)[0];
+    const done = pelajarData.filter(p => (p.kStatus||{})[k]==='done').length;
+    const last = pelajarData.filter(p => (p.kStatus||{})[k]==='done').slice(-1)[0];
     return `<div class="board-kaunter">
       <div class="bk-name">${name}</div>
       <div class="bk-count">${done}</div>
@@ -1444,12 +1445,12 @@ function exportCSV() {
     const nota   = p.kNota || {};
     return [
       i+1, formatIC(p.noic,false), p.nama, p.program, j==='L'?'Lelaki':'Perempuan',
-      p.kStatus.k1||'', nota.k1||'',
-      p.kStatus.k2||'', nota.k2||'',
-      p.kStatus.k3||'', nota.k3||'',
-      p.kStatus.k4||'', nota.k4||'',
+      (p.kStatus||{}).k1||'', nota.k1||'',
+      (p.kStatus||{}).k2||'', nota.k2||'',
+      (p.kStatus||{}).k3||'', nota.k3||'',
+      (p.kStatus||{}).k4||'', nota.k4||'',
       p.k5BayarYuran?'Ya':'Tidak', p.k5eBorang?'Ya':'Tidak', nota.k5||'',
-      p.kStatus.k6||'', p.k6SaizBaju||'', nota.k6||'',
+      (p.kStatus||{}).k6||'', p.k6SaizBaju||'', nota.k6||'',
       p.uruStatus||'', p.uruIsu||'',
       getStatusAkhir(p), p.masaMula||'', p.masaSelesai||'', tempoh
     ].map(v => '"'+String(v).replace(/"/g,'""')+'"').join(',');
