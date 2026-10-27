@@ -772,7 +772,7 @@ function loadData() {
   const url = appConfig.scriptUrl;
   if (!url) { loadDemoData(); return; }
   document.getElementById('setup-banner').style.display = 'none';
-  fetch(url + '?action=getData', { redirect: 'follow' })
+  fetch(url + '?action=getData')
     .then(r => r.json())
     .then(json => {
       if (json.status === 'ok') { pelajarData = json.data; renderAll(); showToast('✅ Data dimuatkan dari Google Sheets.'); }
