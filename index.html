@@ -782,7 +782,12 @@ function loadData() {
       let json;
       try { json = JSON.parse(text); } catch(e) { throw new Error('JSON parse gagal: ' + text.substring(0,100)); }
       if (json.status === 'ok') {
-        pelajarData = json.data;
+        pelajarData = json.data.map(p => ({
+          ...p,
+          kStatus: p.kStatus || { k1:'pending', k2:'pending', k3:'pending', k4:'pending', k5:'pending', k6:'pending' },
+          kMasa:   p.kMasa   || { k1:null, k2:null, k3:null, k4:null, k5:null, k6:null },
+          kNota:   p.kNota   || { k1:'', k2:'', k3:'', k4:'', k5:'', k6:'' },
+        }));
         renderAll();
         document.getElementById('setup-banner').style.display = 'none';
         showToast('✅ Data dimuatkan dari Google Sheets.');
@@ -1031,11 +1036,12 @@ function closeModal(id) {
 }
 
 function checkSelesai(p, now) {
+  const ks = p.kStatus || {};
   const allDone = p.hadir
-    && p.kStatus.k1==='done' && p.kStatus.k2==='done'
-    && p.kStatus.k3==='done' && p.kStatus.k4==='done'
+    && ks.k1==='done' && ks.k2==='done'
+    && ks.k3==='done' && ks.k4==='done'
     && p.k5BayarYuran && p.k5eBorang
-    && p.kStatus.k6==='done';
+    && ks.k6==='done';
   p.masaSelesai = allDone ? now : null;
 }
 
@@ -1086,9 +1092,10 @@ function renderCards() {
 }
 
 function isSelesai(p) {
-  return p.hadir && p.kStatus.k1==='done' && p.kStatus.k2==='done'
-    && p.kStatus.k3==='done' && p.kStatus.k4==='done'
-    && p.k5BayarYuran && p.k5eBorang && p.kStatus.k6==='done';
+  const ks = p.kStatus || {};
+  return p.hadir && ks.k1==='done' && ks.k2==='done'
+    && ks.k3==='done' && ks.k4==='done'
+    && p.k5BayarYuran && p.k5eBorang && ks.k6==='done';
 }
 
 // ============================================================
