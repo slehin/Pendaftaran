@@ -777,12 +777,24 @@ function loadData() {
   if (!url) { loadDemoData(); return; }
   document.getElementById('setup-banner').style.display = 'none';
   fetch(url + '?action=getData')
-    .then(r => r.json())
-    .then(json => {
-      if (json.status === 'ok') { pelajarData = json.data; renderAll(); showToast('✅ Data dimuatkan dari Google Sheets.'); }
-      else { showToast('⚠️ Gagal sambung ke Google Sheets. Guna data demo.'); loadDemoData(); }
+    .then(r => r.text())
+    .then(text => {
+      let json;
+      try { json = JSON.parse(text); } catch(e) { throw new Error('JSON parse gagal: ' + text.substring(0,100)); }
+      if (json.status === 'ok') {
+        pelajarData = json.data;
+        renderAll();
+        document.getElementById('setup-banner').style.display = 'none';
+        showToast('✅ Data dimuatkan dari Google Sheets.');
+      } else {
+        throw new Error('status: ' + json.status);
+      }
     })
-    .catch(()=> { showToast('⚠️ Gagal sambung ke Google Sheets. Guna data demo.'); loadDemoData(); });
+    .catch(err => {
+      console.error('loadData error:', err.message);
+      showToast('⚠️ Gagal sambung ke Google Sheets. Guna data demo.');
+      loadDemoData();
+    });
 }
 
 function loadDemoData() {
