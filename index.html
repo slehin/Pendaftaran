@@ -1458,11 +1458,12 @@ function saveConfig() {
 // INIT
 // ============================================================
 window.onload = () => {
-  if (appConfig.scriptUrl) {
-    document.getElementById('cfg-url').value      = appConfig.scriptUrl;
-    document.getElementById('cfg-sheet-id').value = appConfig.sheetId || '';
-    document.getElementById('setup-banner').style.display = 'none';
-  }
+  // Pastikan default URL sentiasa ada
+  if (!appConfig.scriptUrl) appConfig.scriptUrl = DEFAULT_SCRIPT_URL;
+  if (!appConfig.sheetId)   appConfig.sheetId   = DEFAULT_SHEET_ID;
+  document.getElementById('cfg-url').value      = appConfig.scriptUrl;
+  document.getElementById('cfg-sheet-id').value = appConfig.sheetId;
+  document.getElementById('setup-banner').style.display = 'none';
   updateTabVisibility();
   loadData();
   showLogin();
