@@ -772,10 +772,11 @@ function loadData() {
   const url = appConfig.scriptUrl;
   if (!url) { loadDemoData(); return; }
   document.getElementById('setup-banner').style.display = 'none';
-  fetch(url + '?action=getData')
+  fetch(url + '?action=getData', { redirect: 'follow' })
     .then(r => r.json())
     .then(json => {
       if (json.status === 'ok') { pelajarData = json.data; renderAll(); showToast('✅ Data dimuatkan dari Google Sheets.'); }
+      else { showToast('⚠️ Gagal sambung ke Google Sheets. Guna data demo.'); loadDemoData(); }
     })
     .catch(()=> { showToast('⚠️ Gagal sambung ke Google Sheets. Guna data demo.'); loadDemoData(); });
 }
