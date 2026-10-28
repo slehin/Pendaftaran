@@ -1205,7 +1205,9 @@ function renderPelajar() {
       const notaCls  = hasNota ? 'has-nota' : '';
       const notaTitle= hasNota ? ('Catatan: ' + p.kNota[k]) : 'Tambah catatan';
 
-      if (!p.hadir) return `<td><span class="k-badge pending">—</span></td>`;
+      // K1 sentiasa tunjuk butang tick (untuk tandakan kehadiran)
+      // K2–K4 hanya papar butang bila pelajar sudah hadir (K1 done)
+      if (!p.hadir && k !== 'k1') return `<td><span class="k-badge pending">—</span></td>`;
 
       if (canTick(k)) {
         const tickCls = st==='done' ? 'done' : '';
